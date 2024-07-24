@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # Go updates
+  - package-ecosystem: "gomod"
+    directory: "/golang"
+    schedule:
+      interval: "weekly"
+
+  # Rust updates
+  - package-ecosystem: "cargo"
+    directory: "/rust"
+    schedule:
+      interval: "weekly"
+
+  # Node.js updates
+  - package-ecosystem: "npm"
+    directory: "/node"
+    schedule:
+      interval: "weekly"
+
+  # Python updates
+  - package-ecosystem: "pip"
+    directory: "/python"
+    schedule:
+      interval: "weekly"

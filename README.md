@@ -1,42 +1,65 @@
-# YOUTUBE DOWNLOADER BOT 🎆
+# YouTube Downloader Bot 🎥✨
 
-A bot finalized to download YouTube Links using PyTube's Python Library.
+A Telegram bot that allows you to download YouTube videos in various resolutions.
 
-## Installation
+## Features 🌟
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the following packages.
+- Download YouTube videos in different resolutions
+- Supports both YouTube links and short URLs (e.g., `https://youtu.be/`)
+- Customizable emojis for the inline keyboard buttons
+- Efficient file handling and temporary storage
 
-```bash
-pip install pyrogram, pytube, tgcrypto
-```
-The packages are needed to make the bot work properly.
-TgCrypto is "optional", however it would make the bot signficantly faster.
+## Installation 🛠️
 
-Change the following settings:
-```python
-api_id = 1 #YOUR API ID
-api_hash = "" #YOUR API KEY
-bot_token = "" #YOUR BOT TOKEN
-```
-Into your API keys, if you don't have API keys you can create an App to generate them [here](https://my.telegram.org/apps).
+1. Clone the repository:
 
-You can also change the random emojis choosen in this list (or add other ones):
-```python
-EMOJIS = ["🔥","🍬","🌹","🎂","👀","😜","🎶"]
-# Example: EMOJIS = ["🔥","🍬","🌹","🎂","👀","😜","🎶", "🤷‍♀️","🎉💕"]
-```
+   ```bash
+   git clone https://github.com/your-username/youtube-downloader-bot.git
+   ```
 
-## Usage
+2. Install the required packages:
 
-You start the bot, and send a youtube link, choose the resolution and wait for the bot to send you the video!
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Contributing
+   The required packages are:
+   - `pyrogram`: A modern Telegram API client library for Python.
+   - `pytube`: A lightweight, Pythonic, dependency-free, library for downloading YouTube videos.
+   - `tgcrypto`: An optional package that significantly enhances the bot's speed.
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+3. Configure the bot:
 
-Please make sure to update tests as appropriate.
+   Update the following settings in the `config.py` file with your API keys:
 
-## License
+   ```python
+   api_id = 1  # Your API ID
+   api_hash = ""  # Your API Hash
+   bot_token = ""  # Your Bot Token
+   ```
 
-[MIT](https://choosealicense.com/licenses/mit/)
+   If you don't have API keys, you can create an app to generate them [here](https://my.telegram.org/apps).
+
+   You can also customize the emojis used in the bot by modifying the `EMOJIS` list in the `config.py` file.
+
+## Usage 🚀
+
+1. Start the bot:
+
+   ```bash
+   python main.py
+   ```
+
+2. Send a YouTube link to the bot.
+3. Choose the desired resolution from the inline keyboard.
+4. Wait for the bot to download and send the video.
+
+## Contributing 🤝
+
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+
+When contributing, please ensure that you update the tests as appropriate.
+
+## License 📄
+
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
