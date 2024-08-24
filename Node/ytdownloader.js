@@ -5,58 +5,80 @@ const path = require('path');
 const { BOT_TOKEN } = require('./config');
 const { Telegraf, Markup } = require('telegraf');
 
-
-// Configuration
+// Configurazione del bot
 const bot = new Telegraf(BOT_TOKEN);
-let LINK = null;
 const EMOJIS = ["🔥", "🍬", "🌹", "🎂", "👀", "😜", "🎶"];
+let videoLink = null;
 
-// Create resolution buttons for inline keyboard
+// Creazione dei pulsanti di risoluzione per la tastiera inline
 function createResolutionButtons(resolutions) {
   return Markup.inlineKeyboard(
-    resolutions.map((res) => Markup.button.callback(`${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]} ${res}`, res))
+    resolutions.map(resolution =>
+      Markup.button.callback(`${getRandomEmoji()} ${resolution}`, resolution)
+    )
   );
 }
 
-// Download and send video
+// Genera un'emoji casuale
+function getRandomEmoji() {
+  return EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+}
+
+// Scarica e invia il video
 async function downloadAndSendVideo(ctx, link, resolution) {
+  const videoPath = path.join(os.tmpdir(), 'video.mp4');
+  
   try {
-    const videoPath = path.join(os.tmpdir(), 'video.mp4');
-    await new Promise((resolve, reject) => {
-      exec(`youtube-dl -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best' -o '${videoPath}' '${link}'`, (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
-    await ctx.replyWithVideo({ source: videoPath }, { caption: '**Video downloaded!**' });
-    fs.unlinkSync(videoPath);
-  } catch (e) {
-    console.error(`Error downloading video: ${e}`);
-    await ctx.reply('**Error!** __Check console.__');
+    await executeCommand(`youtube-dl -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best' -o '${videoPath}' '${link}'`);
+    await ctx.replyWithVideo({ source: videoPath }, { caption: '**Video scaricato con successo!**' });
+  } catch (error) {
+    console.error(`Errore durante il download del video: ${error}`);
+    await ctx.reply('**Errore!** __Controlla la console.__');
+  } finally {
+    cleanUp(videoPath);
   }
 }
 
-// Start command
-bot.start((ctx) => ctx.reply('**Hello!** __Send me a YouTube link!__'));
+// Esegui un comando shell
+function executeCommand(command) {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(stdout);
+      }
+    });
+  });
+}
 
-// Handle YouTube link
+// Cancella il file scaricato
+function cleanUp(filePath) {
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+}
+
+// Gestione del comando /start
+bot.start((ctx) => ctx.reply('**Ciao!** __Mandami un link di YouTube!__'));
+
+// Gestione dei messaggi di testo contenenti link di YouTube
 bot.on('text', async (ctx) => {
-  if (ctx.message.text.includes('https://www.youtube.com/') || ctx.message.text.includes('https://youtu.be/')) {
-    LINK = ctx.message.text;
+  const text = ctx.message.text;
+  if (text.includes('https://www.youtube.com/') || text.includes('https://youtu.be/')) {
+    videoLink = text;
     const resolutions = ['720p', '480p', '360p', '240p', '144p'];
-    await ctx.reply('Pick a resolution:', createResolutionButtons(resolutions));
+    await ctx.reply('Scegli una risoluzione:', createResolutionButtons(resolutions));
   }
 });
 
-// Handle resolution selection
+// Gestione della selezione della risoluzione
 bot.on('callback_query', async (ctx) => {
   const resolution = ctx.callbackQuery.data;
   await ctx.deleteMessage();
-  await ctx.reply('Downloading...');
-  await downloadAndSendVideo(ctx, LINK, resolution);
+  await ctx.reply('Download in corso...');
+  await downloadAndSendVideo(ctx, videoLink, resolution);
 });
 
+// Avvio del bot
 bot.launch();
